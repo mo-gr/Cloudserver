@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
-if process.argv.length < 3
-  console.log 'usage: project-split.coffee languageConfig sourcefolder [more folders]'
+if process.argv.length < 4
+  console.log "usage: #{process.argv[1]} <languageConfig> <sourcefolder> [more folders]"
   return
 
 fs = require('fs')
