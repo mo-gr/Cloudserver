@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Wordcloud Analysis</title>
+    <script src="/d3.js"></script>
+    <script src="/d3.layout.cloud.js"></script>
+    <script src="/jquery-1.7.1.js"></script>
+  </head>
+  <body>
+    <script>
+      var colors = d3.scale.category20();
+      function draw(words) {
+        d3.select("body").append("svg")
+          .attr("width", 800)
+          .attr("height", 600)
+        .append("g")
+          .attr("transform", "translate(400,300)")
+        .selectAll("text")
+          .data(words)
+        .enter().append("text")
+          .style("font-size", function(d) { return d.size + "px"; })
+          .style("font-family", function(d) {return d.font;} )
+          .attr("fill", function(d) { return colors(d.text) })
+          .attr("text-anchor", "middle")
+          .attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+          })
+          .text(function(d) { return d.text; });
+        };
+
+      $.getJSON('/json', function(data) {
+        var min = 32000, max = 0, _i;
+        for (_i = 0, _len = data.length; _i < _len; _i++) {
+          word = data[_i];
+          if (word.size < min) { min = word.size }; 
+          if (word.size > max) { max = word.size }; 
+        }
+
+        var fontRange = d3.scale['log']().domain([min, max]).range([10,80])
+        d3.layout.cloud().size([800, 600])
+        .words(data)
+        .rotate(function() { return ~~(Math.random() * 2) * 90; })
+        .fontSize(function(d) { return fontRange(d.size); })
+        .font("Impact")
+        .on("end", draw).start();
+      });
+    </script>
+  </body>
+</html>
