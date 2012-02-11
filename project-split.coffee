@@ -1,17 +1,23 @@
+#!/usr/bin/env coffee
+
+if process.argv.length < 3
+  console.log 'usage: project-split.coffee languageConfig sourcefolder [more folders]'
+  return
+
 fs = require('fs')
 path = require('path')
 
-directories = process.argv.splice(2)
+directories = process.argv.splice(3)
 
-whitelist = /.*\.java$/
-parseStart = /( )class( )/
+languageConfig = require('./' + process.argv[2] + '.languageConfig.js')
+
+whitelist = languageConfig.whitelist
+parseStart = languageConfig.parseStart
+blacklist = languageConfig.blacklist
 globalWords = {}
 globalWordsArray = []
 webRoot = 'webroot'
 maxWords = 100
-
-blacklist = ['return']
-#blacklist = ['return', 'public', 'final', 'private', 'class', 'if']
 
 openDirectory = (dir) ->
   fs.stat dir, (err, stats) ->
