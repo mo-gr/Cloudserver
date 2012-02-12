@@ -85,9 +85,10 @@ processingFinished = () ->
     return -1 if a.size > b.size
     return 1 if a.size < b.size
     return 0
-  console.log('Done parsing')
   #console.log globalWordsArray
   wordServer.listen serverPort
+  console.log('Done parsing. Cloud available at:')
+  console.log("http://localhost:#{serverPort}/")
 
 # start servers
 wordServer = http.createServer (req, res) ->
