@@ -18,6 +18,7 @@ languageConfig = require('./' + process.argv[2] + '.languageConfig.js')
 whitelist = languageConfig.whitelist
 parseStart = languageConfig.parseStart
 blacklist = languageConfig.blacklist
+additionalChars = languageConfig.additionalChars
 
 # global config
 webRoot = 'webroot'
@@ -69,7 +70,7 @@ parseFile = (err, data) ->
 # second split by words and check if they aren't blacklistet words
 # finally, add them to the globalWords map
 processLine = (line) ->
-  cleaned = line.replace /[^0-9a-zA-Z@]/g, ' '
+  cleaned = line.replace(new RegExp("[^0-9a-zA-Z#{additionalChars}]", "g"), ' ')
   words = cleaned.split ' '
   for word in words
     if word and blacklist.indexOf(word.trim()) < 0
