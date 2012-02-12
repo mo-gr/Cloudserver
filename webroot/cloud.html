@@ -9,6 +9,16 @@
   </head>
   <body>
     <script>
+      var url = window.location.href;
+      var parameters = url.slice(url.indexOf('?') + 1).split('&');
+      var limit = 10;
+      for (var i = 0; i < parameters.length; i++) {
+        var parameter = parameters[i].split('=');
+        if (parameter[0] == 'limit' && parameter[1]) {
+          limit = parameter[1];
+        }
+      }
+
       var colors = d3.scale.category20();
       function draw(words) {
         d3.select("body").append("svg")
@@ -29,7 +39,7 @@
           .text(function(d) { return d.text; });
         };
 
-      $.getJSON('/json', function(data) {
+      $.getJSON('/json?limit=' + limit, function(data) {
         var min = 32000, max = 0, _i;
         for (_i = 0, _len = data.length; _i < _len; _i++) {
           word = data[_i];
