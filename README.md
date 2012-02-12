@@ -45,6 +45,12 @@ The generated html accepts the requestParameter `limit` to configure the number 
 
 The output can be further configured in the file `webroot/cloud.html`. For more information refere to the documentation of [d3-cloud][d3] and [d3](http://mbostock.github.com/d3/).
 
+## Configuration
+
+The language-specific configuration has to be in a file called `languageName.languageConfig.js`. See `java.languageConfig.js` for a documented example of all the possible configurations.
+
+Other global configurations, like the server port can be manipulated at the top of `cloudserver.coffee` directly.
+
 [1]: http://twitter.com/#!/kevlinhenney
 [d3]: https://github.com/jasondavies/d3-cloud
 [a]: https://github.com/caolan/async
