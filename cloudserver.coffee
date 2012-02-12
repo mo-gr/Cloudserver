@@ -6,6 +6,7 @@ if process.argv.length < 4
 
 fs = require('fs')
 path = require('path')
+async = require('async')
 
 directories = process.argv.splice(3)
 
@@ -19,7 +20,7 @@ globalWordsArray = []
 webRoot = 'webroot'
 maxWords = 100
 
-openDirectory = (dir) ->
+openDirectory = (dir, cb) ->
   fs.stat dir, (err, stats) ->
     if (err)
       console.log(err)
@@ -29,21 +30,21 @@ openDirectory = (dir) ->
         if (err)
           console.log(err)
           return
-        for file in files
-          openDirectory(path.join(dir, file))
+        async.forEach(files.map((file)->
+          path.join(dir, file)), openDirectory, cb)
+        return
     if (stats.isFile())
       processFile(dir)
+      cb(null)
 
 processFile = (file) ->
   if (file.match whitelist)
     console.log('processing ' + file)
-    processingCount += 1
     fs.readFile file, 'UTF-8', parseFile
 
 parseFile = (err, data) ->
   if (err)
     console.log(err)
-    processingCount -= 1
     return
   lines = data.split('\n')
   greenLight = false
@@ -51,8 +52,6 @@ parseFile = (err, data) ->
     if greenLight || line.match parseStart
       greenLight = true
       processLine line
-  processingCount -= 1
-  processingFinished()
 
 processLine = (line) ->
   cleaned = line.replace /[^0-9a-zA-Z@]/g, ' '
@@ -62,20 +61,16 @@ processLine = (line) ->
       globalWords[word] = globalWords[word] || 0
       globalWords[word] += 1
 
-processingCount = 0
-for dir in directories
-  openDirectory(dir)
 
 processingFinished = () ->
-  if processingCount == 0
-    for word, count of globalWords
-      globalWordsArray.push {text: word, size: count}
-    globalWordsArray.sort (a,b) ->
-      return -1 if a.size > b.size
-      return 1 if a.size < b.size
-      return 0
-    console.log('Done parsing')
-    #console.log globalWordsArray
+  for word, count of globalWords
+    globalWordsArray.push {text: word, size: count}
+  globalWordsArray.sort (a,b) ->
+    return -1 if a.size > b.size
+    return 1 if a.size < b.size
+    return 0
+  console.log('Done parsing')
+  #console.log globalWordsArray
 
 # start servers
 http = require('http')
@@ -106,3 +101,11 @@ wordServer = http.createServer (req, res) ->
 
 
 wordServer.listen 4242
+
+#start parsing
+async.forEach(directories, openDirectory, (err) ->
+  if (err)
+    console.log(err)
+    return
+  processingFinished()
+)
