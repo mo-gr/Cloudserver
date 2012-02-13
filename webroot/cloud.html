@@ -11,7 +11,7 @@
     <script>
       var url = window.location.href;
       var parameters = url.slice(url.indexOf('?') + 1).split('&');
-      var limit = 10;
+      var limit = 100;
       for (var i = 0; i < parameters.length; i++) {
         var parameter = parameters[i].split('=');
         if (parameter[0] == 'limit' && parameter[1]) {
