@@ -40,7 +40,7 @@ openDirectory = (dir, cb) ->
         if (err)
           console.log(err)
           return
-        async.forEach(files.map((file)->
+        async.forEachSeries(files.map((file)->
           path.join(dir, file)), openDirectory, cb)
         return
     if (stats.isFile())
@@ -119,7 +119,7 @@ wordServer = http.createServer (req, res) ->
 
 # start procesing of input directories
 # this sets the entire contraption into motion
-async.forEach(directories, openDirectory, (err) ->
+async.forEachSeries(directories, openDirectory, (err) ->
   if (err)
     console.log(err)
     return
