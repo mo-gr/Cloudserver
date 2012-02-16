@@ -40,8 +40,7 @@ openDirectory = (dir, cb) ->
         if (err)
           console.log(err)
           return
-        async.forEachSeries(files.map((file)->
-          path.join(dir, file)), openDirectory, cb)
+        async.forEachSeries(files.map((file)-> path.join(dir, file)), openDirectory, cb)
         return
     if (stats.isFile())
       processFile(dir)
