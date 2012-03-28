@@ -44,13 +44,14 @@ openDirectory = (dir, cb) ->
         return
     if (stats.isFile())
       processFile(dir)
-      cb(null)
+      cb()
 
 # check if the file is intereisting for us, open when necessary
 processFile = (file) ->
   if (file.match whitelist)
     console.log('processing ' + file)
-    fs.readFile file, 'UTF-8', parseFile
+    data = fs.readFileSync file, 'UTF-8'
+    parseFile(null, data)
 
 # process-file callback
 parseFile = (err, data) ->
@@ -84,7 +85,6 @@ processingFinished = () ->
     return -1 if a.size > b.size
     return 1 if a.size < b.size
     return 0
-  #console.log globalWordsArray
   wordServer.listen serverPort
   console.log('Done parsing. Cloud available at:')
   console.log("http://localhost:#{serverPort}/")
